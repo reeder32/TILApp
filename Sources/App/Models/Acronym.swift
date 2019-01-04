@@ -5,12 +5,12 @@ final class Acronym: Codable {
     var id: Int?
     var short: String
     var long: String
-    var userID: User.ID
+    var userId: User.ID
 
     init(short: String, long: String, userId: User.ID) {
         self.short = short
         self.long = long
-        self.userID = userId
+        self.userId = userId
     }
 }
 
@@ -21,7 +21,7 @@ extension Acronym: Migration {
         ) -> Future<Void> {
         return Database.create(self, on: connection) { builder in
             try addProperties(to: builder)
-            builder.reference(from: \.userID, to: \User.id)
+            builder.reference(from: \.userId, to: \User.id)
         }
     }
 }
@@ -29,7 +29,7 @@ extension Acronym: Content {}
 extension Acronym: Parameter {}
 extension Acronym {
     var user: Parent<Acronym, User> {
-        return parent(\.userID)
+        return parent(\.userId)
     }
     var categories: Siblings<Acronym,
                             Category,
