@@ -1,8 +1,13 @@
 import FluentPostgreSQL
 import Vapor
+import Leaf
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
+
+    /// Register Leaf as html template
+    try services.register(LeafProvider())
+
     /// Register providers first
     try services.register(FluentPostgreSQLProvider())
 
@@ -59,5 +64,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var commandConfig = CommandConfig.default()
     commandConfig.useFluentCommands()
     services.register(commandConfig)
+
+    config.prefer(LeafRenderer.self, for: ViewRenderer.self)
 
 }
