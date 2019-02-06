@@ -34,48 +34,27 @@ extension Application {
         .wait()
     }
 
-    func sendRequest<T>(
-        to path: String,
-        method: HTTPMethod,
-        headers: HTTPHeaders = .init(),
-        body: T? = nil,
-        loggedInRequest: Bool = false,
-        loggedInUser: User? = nil
-        ) throws -> Response where T: Content {
-
+    func sendRequest<T>(to path: String, method: HTTPMethod, headers: HTTPHeaders = .init(), body: T? = nil, loggedInRequest: Bool = false, loggedInUser: User? = nil) throws -> Response where T: Content {
         var headers = headers
-
         if (loggedInRequest || loggedInUser != nil) {
-            let username: String
+            var tokenHeaders: HTTPHeaders
             if let user = loggedInUser {
-                username = user.username
+                let credentials = BasicAuthorization(username: user.username, password: "password")
+                tokenHeaders = .init()
+                tokenHeaders.basicAuthorization = credentials
             } else {
-                username = "admin"
+                tokenHeaders = ["Authorization": "Basic YWRtaW46cGFzc3dvcmQ="]
             }
-            let credentials = BasicAuthorization(username: username, password: "password")
-
-            var tokenHeaders = HTTPHeaders()
-            tokenHeaders.basicAuthorization = credentials
-
             let tokenResponse = try self.sendRequest(to: "/api/users/login", method: .POST, headers: tokenHeaders)
             let token = try tokenResponse.content.syncDecode(Token.self)
             headers.add(name: .authorization, value: "Bearer \(token.token)")
         }
-
-
-
         let responder = try self.make(Responder.self)
-        let request = HTTPRequest(
-            method: method,
-            url: URL(string: path)!,
-            headers: headers)
-        let wrappedRequest = Request(
-            http: request,
-            using: self)
+        let request = HTTPRequest(method: method, url: URL(string: path)!, headers: headers)
+        let wrappedRequest = Request(http: request, using: self)
         if let body = body {
             try wrappedRequest.content.encode(body)
         }
-
         return try responder.respond(to: wrappedRequest).wait()
     }
 
