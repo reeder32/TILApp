@@ -1,6 +1,7 @@
 import Vapor
 import Leaf
 import Fluent
+import Authentication
 
 struct WebsiteController: RouteCollection {
     func boot(router: Router) throws {
@@ -16,6 +17,9 @@ struct WebsiteController: RouteCollection {
         router.get("acronyms", Acronym.parameter, "edit", use: editAcronymHandler)
         router.post("acronyms", Acronym.parameter, "edit", use: editAcronymPostHandler)
         router.post("acronyms", Acronym.parameter, "delete", use: deleteAcronymHandler)
+
+        router.get("login", use: loginHandler)
+        router.post(LoginPostData.self, at: "login", use: loginPostHandler)
     }
 
     func indexHandler(_ request: Request) throws -> Future <View>{
@@ -88,7 +92,7 @@ struct WebsiteController: RouteCollection {
     }
 
     func createAcronymPostHandler(_ req: Request, data: CreateAcronymData) throws -> Future<Response> {
-        let acronym = Acronym(short: data.short, long: data.long, userId: data.userID)
+        let acronym = Acronym(short: data.short, long: data.long, userID: data.userID)
 
         return acronym.save(on: req)
             .flatMap(to: Response.self) { acronym in
@@ -184,6 +188,31 @@ struct WebsiteController: RouteCollection {
             .transform(to: req.redirect(to: "/"))
     }
 
+    func loginHandler(_ req: Request) throws -> Future<View> {
+        let context: LoginContext
+
+        if req.query[Bool.self, at: "error"] != nil {
+            context = LoginContext(loginError: true)
+        } else {
+            context = LoginContext()
+        }
+
+        return try req.view().render("login", context)
+    }
+
+    func loginPostHandler(_ req: Request, userData: LoginPostData) throws -> Future<Response> {
+        return User.authenticate(username: userData.username, password: userData.password, using: BCryptDigest(), on: req)
+            .map(to: Response.self) { user in
+                guard let user = user else {
+                    return req.redirect(to: "/login?error")
+                }
+
+                try req.authenticateSession(user)
+
+                return req.redirect(to: "/")
+        }
+    }
+
 
 
     //// MARK: contexts
@@ -234,9 +263,23 @@ struct WebsiteController: RouteCollection {
     }
 
     struct CreateAcronymData: Content {
+        
         let userID: User.ID
         let short: String
         let long: String
         let categories: [String]?
+    }
+
+    struct LoginContext: Encodable {
+        let title = "Log In"
+        let loginError: Bool
+        init(loginError: Bool = false) {
+            self.loginError = loginError
+        }
+    }
+
+    struct LoginPostData: Content {
+        let username: String
+        let password: String
     }
 }

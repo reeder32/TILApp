@@ -63,7 +63,7 @@ final class AcronymTests: XCTestCase {
 
   func testAcronymCanBeSavedWithAPI() throws {
     let user = try User.create(on: conn)
-    let acronym = Acronym(short: acronymShort, long: acronymLong, userId: user.id!)
+    let acronym = Acronym(short: acronymShort, long: acronymLong, userID: user.id!)
     let receivedAcronym = try app.getResponse(to: acronymsURI, method: .POST, headers: ["Content-Type": "application/json"], data: acronym, decodeTo: Acronym.self, loggedInRequest: true)
 
     XCTAssertEqual(receivedAcronym.short, acronymShort)
@@ -92,7 +92,7 @@ final class AcronymTests: XCTestCase {
     let acronym = try Acronym.create(short: acronymShort, long: acronymLong, on: conn)
     let newUser = try User.create(on: conn)
     let newLong = "Oh My Gosh"
-    let updatedAcronym = Acronym(short: acronymShort, long: newLong, userId: newUser.id!)
+    let updatedAcronym = Acronym(short: acronymShort, long: newLong, userID: newUser.id!)
 
     _ = try app.sendRequest(to: "\(acronymsURI)\(acronym.id!)", method: .PUT, headers: ["Content-Type": "application/json"], body: updatedAcronym, loggedInUser: newUser)
 

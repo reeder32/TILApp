@@ -82,8 +82,8 @@ final class CategoryTests: XCTestCase {
   }
 
   func testGettingACategoriesAcronymsFromTheAPI() throws {
-    let acronymShort = "OMG"
-    let acronymLong = "Oh My God"
+    let acronymShort = "TIL"
+    let acronymLong = "Today I Learned"
     let acronym = try Acronym.create(short: acronymShort, long: acronymLong, on: conn)
     let acronym2 = try Acronym.create(on: conn)
 
@@ -101,8 +101,8 @@ final class CategoryTests: XCTestCase {
 
     let acronyms = try app.getResponse(to: "\(categoriesURI)\(category.id!)/acronyms", decodeTo: [Acronym].self)
 
-    XCTAssertEqual(acronyms.count, 2)
-    XCTAssertEqual(acronyms[0].id, acronym.id)
+    XCTAssertEqual(acronyms.count, 1)
+    XCTAssertEqual(acronyms[0].id, acronym2.id)
     XCTAssertEqual(acronyms[0].short, acronymShort)
     XCTAssertEqual(acronyms[0].long, acronymLong)
   }

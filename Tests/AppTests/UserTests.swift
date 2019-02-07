@@ -40,12 +40,12 @@ final class UserTests: XCTestCase {
         XCTAssertEqual(receivedUser.username, usersUsername)
         XCTAssertNotNil(receivedUser.id)
 
-        let users = try app.getResponse(to: usersURI, decodeTo: [User].self)
+        let users = try app.getResponse(to: usersURI, decodeTo: [User.Public].self)
 
-        XCTAssertEqual(users.count, 1)
-        XCTAssertEqual(users[0].name, usersName)
-        XCTAssertEqual(users[0].username, usersUsername)
-        XCTAssertEqual(users[0].id, receivedUser.id)
+        XCTAssertEqual(users.count, 2)
+        XCTAssertEqual(users[1].name, usersName)
+        XCTAssertEqual(users[1].username, usersUsername)
+        XCTAssertEqual(users[1].id, receivedUser.id)
     }
 
     func testUsersCanBeRetrievedFromAPI() throws {
@@ -64,7 +64,7 @@ final class UserTests: XCTestCase {
 
     func testGettingASingleUserFromTheAPI() throws {
         let user = try User.create(name: usersName, username: usersUsername, on: conn)
-        let retrievedUser = try app.getResponse(to: "\(usersURI)\(user.id!)", decodeTo: User.self)
+        let retrievedUser = try app.getResponse(to: "\(usersURI)\(user.id!)", decodeTo: User.Public.self)
 
 
         XCTAssertEqual(retrievedUser.name, usersName)

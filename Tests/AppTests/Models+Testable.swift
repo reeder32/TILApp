@@ -37,7 +37,7 @@ extension Acronym {
         let acronym = Acronym(
             short: short,
             long: long,
-            userId: acronymUser!.id!
+            userID: acronymUser!.id!
         )
         return try acronym.save(on: connection).wait()
     }

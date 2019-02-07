@@ -29,7 +29,7 @@ struct AcronymsController: RouteCollection {
 
     func createHandler(_ req: Request, data: AcronymCreateData) throws -> Future<Acronym> {
         let user = try req.requireAuthenticated(User.self)
-        let acronym = try Acronym(short: data.short, long: data.long, userId: user.requireID())
+        let acronym = try Acronym(short: data.short, long: data.long, userID: user.requireID())
         return acronym.save(on: req)
     }
 
