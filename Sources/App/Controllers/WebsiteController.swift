@@ -131,7 +131,7 @@ struct WebsiteController: RouteCollection {
 
                                 acronym.short = data.short
                                 acronym.long = data.long
-                                acronym.userId = data.userId
+                                acronym.userID = data.userId
 
                                 return acronym.save(on: req)
                                     .flatMap(to: Response.self) { savedAcronym in

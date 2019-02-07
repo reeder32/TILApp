@@ -50,7 +50,7 @@ extension User: Migration {
 
 extension User {
     var acronyms: Children<User, Acronym> {
-        return children(\.userId)
+        return children(\.userID)
     }
 }
 
