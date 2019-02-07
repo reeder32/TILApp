@@ -100,7 +100,7 @@ final class AcronymTests: XCTestCase {
 
     XCTAssertEqual(returnedAcronym.short, acronymShort)
     XCTAssertEqual(returnedAcronym.long, newLong)
-    XCTAssertEqual(returnedAcronym.userId, newUser.id)
+    XCTAssertEqual(returnedAcronym.userID, newUser.id)
   }
 
   func testDeletingAnAcronym() throws {

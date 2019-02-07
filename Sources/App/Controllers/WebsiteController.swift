@@ -88,7 +88,7 @@ struct WebsiteController: RouteCollection {
     }
 
     func createAcronymPostHandler(_ req: Request, data: CreateAcronymData) throws -> Future<Response> {
-        let acronym = Acronym(short: data.short, long: data.long, userId: data.userId)
+        let acronym = Acronym(short: data.short, long: data.long, userId: data.userID)
 
         return acronym.save(on: req)
             .flatMap(to: Response.self) { acronym in
@@ -131,7 +131,7 @@ struct WebsiteController: RouteCollection {
 
                                 acronym.short = data.short
                                 acronym.long = data.long
-                                acronym.userID = data.userId
+                                acronym.userID = data.userID
 
                                 return acronym.save(on: req)
                                     .flatMap(to: Response.self) { savedAcronym in
@@ -234,7 +234,7 @@ struct WebsiteController: RouteCollection {
     }
 
     struct CreateAcronymData: Content {
-        let userId: User.ID
+        let userID: User.ID
         let short: String
         let long: String
         let categories: [String]?
