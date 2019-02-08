@@ -54,7 +54,7 @@ struct WebsiteController: RouteCollection {
                     .all()
                     .flatMap(to: View.self) { acronyms in
                         let context = UserContext(title: user.name, user: user, acronyms: acronyms)
-                        return try req.view().render("users", context)
+                        return try req.view().render("user", context)
                 }
         }
     }
