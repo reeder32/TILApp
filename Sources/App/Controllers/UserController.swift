@@ -18,7 +18,7 @@ struct UsersController: RouteCollection {
 
         let basicAuthMiddleware = User.basicAuthMiddleware(using: BCryptDigest())
         let basicAuthGroup = usersRoute.grouped(basicAuthMiddleware)
-        basicAuthGroup.post("login/", use: loginHandler)
+        basicAuthGroup.post("login", use: loginHandler)
 
         let tokenAuthMiddleware = User.tokenAuthMiddleware()
         let guardAuthMiddleware = User.guardAuthMiddleware()
